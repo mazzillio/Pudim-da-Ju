@@ -87,8 +87,11 @@ A Vercel detecta o Fastify sozinha e roda a API como função serverless.
 As variáveis de ambiente são as mesmas da tabela acima, exceto `NODE_VERSION`. Na Vercel a versão
 do Node fica em **Settings → General → Node.js Version**: escolha 24.x.
 
-- **Entrada:** a Vercel roda o `Api/index.ts`, que só carrega o `src/server.ts`. Sem ele, ela
-  escolheria o `src/app.ts`, que não conecta no banco nem sobe o servidor.
+- **Entrada:** a Vercel roda o `Api/index.ts`, que monta a API e exporta um handler `(req, res)`.
+  Sem ele, ela escolheria o `src/app.ts`, que não conecta no banco. O `index.ts` não usa o
+  `src/server.ts` porque a Vercel intercepta o `listen()` sem nunca avisar que o servidor subiu:
+  o `await app.listen()` ficaria pendurado e toda requisição daria
+  `500 INTERNAL_FUNCTION_INVOCATION_FAILED`.
 - **TypeScript:** a Vercel recompila o código com um `tsconfig` temporário que estende o nosso. Por
   isso o `typeRoots` está explícito no `Api/tsconfig.json`. Sem ele, o deploy falha com
   `Cannot find type definition file for 'node'`.
