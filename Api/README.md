@@ -56,7 +56,9 @@ O `app.ts` recebe os repositórios por injeção, então os testes usam fakes em
 ```
 src/
   app.ts                 # monta o Fastify e registra os módulos
-  server.ts              # bootstrap: env, banco, listen
+  create-app.ts          # monta a API com os repositórios do Postgres
+  server.ts              # servidor contínuo (npm start): listen e shutdown
+index.ts                 # entrada da Vercel: exporta um handler (req, res)
   config/env.ts          # validação das variáveis de ambiente
   db/                    # client, schema (drizzle-kit), migrate, seed
   shared/                # erros, hash de senha (scrypt), plugins (auth, docs, error handler)
