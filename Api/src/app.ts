@@ -20,6 +20,8 @@ export interface AppOptions {
   jwtSecret: string;
   jwtExpiresIn: string;
   corsOrigin: string[];
+  /** Also allows origins on private networks (LAN), on any port. */
+  corsAllowLan?: boolean;
   logger?: FastifyServerOptions["logger"];
 }
 
@@ -31,6 +33,10 @@ export interface AppDependencies {
   productImageStorage?: ProductImageStorage;
 }
 
+/** localhost, 127.x, 10.x, 172.16-31.x, 192.168.x and mDNS names (*.local), any port. */
+const LAN_ORIGIN =
+  /^https?:\/\/(localhost|127(\.\d{1,3}){3}|10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[\w-]+\.local)(:\d+)?$/;
+
 export async function buildApp(options: AppOptions, deps: AppDependencies) {
   const app = Fastify({ logger: options.logger ?? false }).withTypeProvider<ZodTypeProvider>();
 
@@ -39,7 +45,7 @@ export async function buildApp(options: AppOptions, deps: AppDependencies) {
   registerErrorHandler(app);
 
   await app.register(fastifyCors, {
-    origin: options.corsOrigin,
+    origin: options.corsAllowLan ? [...options.corsOrigin, LAN_ORIGIN] : options.corsOrigin,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   });
   await app.register(authPlugin, { secret: options.jwtSecret, expiresIn: options.jwtExpiresIn });

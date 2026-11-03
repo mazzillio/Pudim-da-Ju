@@ -17,6 +17,19 @@ npm run dev               # http://localhost:3333
 
 Documentação interativa (Scalar): **http://localhost:3333/docs**
 
+### Na rede local
+
+Com `HOST=0.0.0.0` a API escuta em todas as interfaces e o log do boot mostra os endereços
+de rede (ex.: `http://192.168.0.10:3333`). Para usar a loja e o painel de outro aparelho no mesmo Wi-Fi:
+
+1. Na API, deixe `CORS_ALLOW_LAN=true`: aceita qualquer origem de rede privada (192.168.x.x, 10.x.x.x,
+   172.16–31.x.x, `*.local`) em qualquer porta, sem listar cada IP no `CORS_ORIGIN`.
+2. No `Admin/.env` e no `Web/.env`, aponte a URL da API para o IP da máquina, não `localhost`
+   (para o celular, `localhost` é o próprio celular).
+3. Suba os frontends escutando na rede (ex.: `vite --host`) e libere a porta 3333 no firewall, se houver.
+
+Em produção, deixe `CORS_ALLOW_LAN=false` e liste as origens em `CORS_ORIGIN`.
+
 ## Rotas
 
 | Método | Rota                         | Auth | Descrição                                                                                                            |

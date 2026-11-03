@@ -1,10 +1,13 @@
-import { type AppDependencies, buildApp } from "../../src/app.js";
+import { type AppDependencies, type AppOptions, buildApp } from "../../src/app.js";
 import { hashPassword } from "../../src/shared/password.js";
 import { InMemoryProductsRepository, InMemoryUsersRepository } from "./in-memory-repositories.js";
 
 export const OWNER = { name: "Ju", email: "ju@pudimdaju.com.br", password: "senha-super-secreta" };
 
-export async function buildTestApp(overrides: Partial<AppDependencies> = {}) {
+export async function buildTestApp(
+  overrides: Partial<AppDependencies> = {},
+  appOptions: Partial<AppOptions> = {},
+) {
   const usersRepository = new InMemoryUsersRepository();
   const productsRepository = new InMemoryProductsRepository();
 
@@ -19,6 +22,7 @@ export async function buildTestApp(overrides: Partial<AppDependencies> = {}) {
       jwtSecret: "test-secret-that-is-at-least-32-characters-long",
       jwtExpiresIn: "1h",
       corsOrigin: ["http://localhost:3000"],
+      ...appOptions,
     },
     { usersRepository, productsRepository, ...overrides },
   );

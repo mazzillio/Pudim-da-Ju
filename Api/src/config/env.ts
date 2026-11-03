@@ -11,6 +11,9 @@ const envSchema = z.object({
     .string()
     .default("http://localhost:3000")
     .transform((value) => value.split(",").map((origin) => origin.trim())),
+  // Also accept any origin on a private network (192.168.x.x, 10.x.x.x, ...) so phones and other
+  // machines on the same Wi-Fi can use the storefront and admin panel. Keep it off in production.
+  CORS_ALLOW_LAN: z.stringbool().default(false),
 });
 
 export type Env = z.infer<typeof envSchema>;

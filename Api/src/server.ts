@@ -12,6 +12,7 @@ const app = await buildApp(
     jwtSecret: env.JWT_SECRET,
     jwtExpiresIn: env.JWT_EXPIRES_IN,
     corsOrigin: env.CORS_ORIGIN,
+    corsAllowLan: env.CORS_ALLOW_LAN,
     logger: env.NODE_ENV === "production" ? true : { level: "info" },
   },
   {
