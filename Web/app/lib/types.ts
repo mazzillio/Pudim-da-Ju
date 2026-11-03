@@ -54,6 +54,8 @@ export interface StoreConfig {
   currency: string;
   locale: string;
   paymentMethods: string[];
+  /** Extra options offered only when the customer picks the order up, e.g. paying by card in person. */
+  pickupPaymentMethods?: string[];
   deliveryFee?: number;
   /** Minimum total item quantity required to place an order. */
   minOrderItems: number;

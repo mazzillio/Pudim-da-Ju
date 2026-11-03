@@ -35,6 +35,7 @@ export const storeConfig: StoreConfig = {
   currency: "BRL",
   locale: "pt-BR",
   paymentMethods: ["Dinheiro", "Pix"],
+  pickupPaymentMethods: ["Cartão na retirada"],
   deliveryFee: 5.0,
   minOrderItems: 1,
 };

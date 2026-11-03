@@ -13,6 +13,12 @@ import { formatStoreAddress, storeConfig } from "@/app/configs/store-config";
 import type { CustomerInfo, DeliveryMethod } from "@/app/lib/types";
 import { buildOrderMessage, buildWhatsappLink } from "@/app/lib/whatsapp";
 
+function getPaymentMethods(deliveryMethod: DeliveryMethod): string[] {
+  return deliveryMethod === "pickup"
+    ? [...storeConfig.paymentMethods, ...(storeConfig.pickupPaymentMethods ?? [])]
+    : storeConfig.paymentMethods;
+}
+
 export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
   const { items, clearCart } = useCart();
   const formId = useId();
@@ -24,6 +30,14 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
   const [paymentMethod, setPaymentMethod] = useState(storeConfig.paymentMethods[0]);
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const paymentMethods = getPaymentMethods(deliveryMethod);
+
+  function handleDeliveryMethodChange(next: DeliveryMethod) {
+    setDeliveryMethod(next);
+    // "Cartão na retirada" makes no sense for delivery, so fall back to the first option.
+    if (!getPaymentMethods(next).includes(paymentMethod)) setPaymentMethod(storeConfig.paymentMethods[0]);
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,7 +88,7 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
         <Label>Entrega</Label>
         <RadioGroup
           value={deliveryMethod}
-          onValueChange={(value) => setDeliveryMethod(value as DeliveryMethod)}
+          onValueChange={(value) => handleDeliveryMethodChange(value as DeliveryMethod)}
         >
           <div className="flex items-center gap-2">
             <RadioGroupItem value="delivery" id="delivery-method-delivery" />
@@ -115,7 +129,7 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
       <div className="flex flex-col gap-1.5">
         <Label>Pagamento</Label>
         <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-          {storeConfig.paymentMethods.map((method) => (
+          {paymentMethods.map((method) => (
             <div key={method} className="flex items-center gap-2">
               <RadioGroupItem value={method} id={`payment-${method}`} />
               <Label htmlFor={`payment-${method}`} className="font-normal">
