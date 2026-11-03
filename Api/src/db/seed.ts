@@ -37,7 +37,7 @@ await db
         "Pudim de leite condensado com calda de caramelo, sem furinhos. Inteiro, serve 8 pessoas.",
       priceCents: 4500,
       imageUrl: "https://picsum.photos/seed/pudim-tradicional/600/600",
-      orderType: "pronta-entrega",
+      orderTypes: ["pronta-entrega", "encomenda"],
     },
     {
       slug: "tradicional-fatia",
@@ -45,7 +45,7 @@ await db
       description: "Fatia generosa do nosso pudim de leite condensado com calda de caramelo.",
       priceCents: 900,
       imageUrl: "https://picsum.photos/seed/pudim-tradicional-fatia/600/600",
-      orderType: "pronta-entrega",
+      orderTypes: ["pronta-entrega"],
     },
     {
       slug: "chocolate",
@@ -54,7 +54,7 @@ await db
         "Pudim cremoso de chocolate meio amargo com calda de chocolate. Inteiro, serve 8 pessoas.",
       priceCents: 5200,
       imageUrl: "https://picsum.photos/seed/pudim-chocolate/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
     {
       slug: "doce-de-leite",
@@ -62,7 +62,7 @@ await db
       description: "Pudim de doce de leite com calda de caramelo. Inteiro, serve 8 pessoas.",
       priceCents: 5500,
       imageUrl: "https://picsum.photos/seed/pudim-doce-de-leite/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
     {
       slug: "coco",
@@ -70,7 +70,7 @@ await db
       description: "Pudim com coco fresco ralado e calda de caramelo. Inteiro, serve 8 pessoas.",
       priceCents: 5000,
       imageUrl: "https://picsum.photos/seed/pudim-coco/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
     {
       slug: "mini",
@@ -79,7 +79,7 @@ await db
         "Mini pudim tradicional no pote, ideal para presentear ou para a sobremesa do dia a dia.",
       priceCents: 800,
       imageUrl: "https://picsum.photos/seed/pudim-mini/600/600",
-      orderType: "pronta-entrega",
+      orderTypes: ["pronta-entrega"],
     },
     {
       slug: "babydim-25",
@@ -87,7 +87,7 @@ await db
       description: "Mini pudins individuais, caixa com 25 unidades.",
       priceCents: 5000,
       imageUrl: "https://picsum.photos/seed/pudim-babydim/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
     {
       slug: "babydim-50",
@@ -95,7 +95,7 @@ await db
       description: "Mini pudins individuais, meio cento.",
       priceCents: 8500,
       imageUrl: "https://picsum.photos/seed/pudim-babydim/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
     {
       slug: "babydim-100",
@@ -103,7 +103,7 @@ await db
       description: "Mini pudins individuais, um cento.",
       priceCents: 15000,
       imageUrl: "https://picsum.photos/seed/pudim-babydim/600/600",
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     },
   ])
   .onConflictDoNothing({ target: products.slug });
