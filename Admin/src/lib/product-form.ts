@@ -1,9 +1,9 @@
 import type { OrderType, ProductInput } from "@/lib/types";
 
-export type ProductField = "name" | "description" | "price" | "imageUrl" | "orderType";
+export type ProductField = "name" | "description" | "price" | "imageUrl" | "orderTypes";
 export type ProductFieldErrors = Partial<Record<ProductField, string>>;
 
-const ORDER_TYPES: OrderType[] = ["pronta-entrega", "encomenda"];
+export const ORDER_TYPES: OrderType[] = ["pronta-entrega", "encomenda"];
 
 /** Accepts the ways people type money: "45", "45,9", "45,90", "1.234,50", "45.90". */
 export function parsePrice(raw: string): number | undefined {
@@ -30,7 +30,8 @@ export function parseProductForm(
   const description = String(formData.get("description") ?? "").trim();
   const price = parsePrice(String(formData.get("price") ?? ""));
   const imageUrl = String(formData.get("imageUrl") ?? "").trim();
-  const orderType = String(formData.get("orderType") ?? "") as OrderType;
+  const selected = formData.getAll("orderTypes").map(String);
+  const orderTypes = ORDER_TYPES.filter((type) => selected.includes(type));
   const available = formData.get("available") === "true";
 
   const errors: ProductFieldErrors = {};
@@ -41,8 +42,8 @@ export function parseProductForm(
   else if (price > 100_000) errors.price = "Esse preço parece alto demais.";
   if (!imageUrl) errors.imageUrl = "Cole o link da foto do pudim.";
   else if (!isHttpsUrl(imageUrl)) errors.imageUrl = "O link da foto precisa começar com https://";
-  if (!ORDER_TYPES.includes(orderType)) errors.orderType = "Escolha se é pronta entrega ou encomenda.";
+  if (orderTypes.length === 0) errors.orderTypes = "Marque pronta entrega, encomenda ou os dois.";
 
   if (Object.keys(errors).length > 0) return { errors };
-  return { data: { name, description, price: price as number, imageUrl, available, orderType } };
+  return { data: { name, description, price: price as number, imageUrl, available, orderTypes } };
 }

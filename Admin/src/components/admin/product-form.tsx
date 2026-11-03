@@ -11,7 +11,7 @@ import { describedBy } from "@/lib/described-by";
 import { ADMIN_SWITCH_CLASS, Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiError, api, friendlyError } from "@/lib/api";
-import { type ProductFieldErrors, parseProductForm } from "@/lib/product-form";
+import { ORDER_TYPES, type ProductFieldErrors, parseProductForm } from "@/lib/product-form";
 import type { OrderType, Product, ProductInput } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ export function ProductForm({ product }: { product?: Product }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [available, setAvailable] = useState(product?.available ?? true);
-  const [orderType, setOrderType] = useState<OrderType>(product?.orderType ?? "pronta-entrega");
+  const [orderTypes, setOrderTypes] = useState<OrderType[]>(product?.orderTypes ?? ["pronta-entrega"]);
   const [errors, setErrors] = useState<ProductFieldErrors>({});
 
   const mutation = useMutation({
@@ -51,6 +51,11 @@ export function ProductForm({ product }: { product?: Product }) {
       toast.error(friendlyError(error));
     },
   });
+
+  function toggleOrderType(type: OrderType, checked: boolean) {
+    const next = checked ? [...orderTypes, type] : orderTypes.filter((t) => t !== type);
+    setOrderTypes(ORDER_TYPES.filter((t) => next.includes(t)));
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -113,21 +118,25 @@ export function ProductForm({ product }: { product?: Product }) {
 
       <fieldset className="flex flex-col gap-1.5">
         <legend className="mb-1.5 text-sm font-medium">Tipo</legend>
+        <p id="orderTypes-hint" className="-mt-1 mb-1 text-xs text-muted-foreground">
+          Marque os dois se o pudim tiver pronta entrega e também aceitar encomenda.
+        </p>
         <div className="grid grid-cols-2 gap-2">
           {ORDER_TYPE_OPTIONS.map((option) => (
             <label
               key={option.value}
               className={cn(
                 "flex cursor-pointer flex-col gap-0.5 rounded-2xl border-2 px-3 py-2.5 transition-colors has-focus-visible:ring-3 has-focus-visible:ring-ring/40",
-                orderType === option.value ? "border-primary bg-primary/40" : "border-border hover:bg-muted",
+                orderTypes.includes(option.value) ? "border-primary bg-primary/40" : "border-border hover:bg-muted",
               )}
             >
               <input
-                type="radio"
-                name="orderType"
+                type="checkbox"
+                name="orderTypes"
                 value={option.value}
-                checked={orderType === option.value}
-                onChange={() => setOrderType(option.value)}
+                checked={orderTypes.includes(option.value)}
+                onChange={(event) => toggleOrderType(option.value, event.target.checked)}
+                aria-describedby={describedBy("orderTypes", errors.orderTypes, "hint")}
                 aria-label={option.label}
                 className="sr-only"
               />
@@ -136,9 +145,9 @@ export function ProductForm({ product }: { product?: Product }) {
             </label>
           ))}
         </div>
-        {errors.orderType && (
-          <p role="alert" className="text-sm text-destructive">
-            {errors.orderType}
+        {errors.orderTypes && (
+          <p id="orderTypes-error" role="alert" className="text-sm text-destructive">
+            {errors.orderTypes}
           </p>
         )}
       </fieldset>
