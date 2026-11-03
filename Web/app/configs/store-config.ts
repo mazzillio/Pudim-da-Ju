@@ -5,10 +5,10 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://seu-dominio.
 
 /** Physical store address, used for schema.org LocalBusiness structured data. */
 export const storeAddress = {
-  streetAddress: "Rua Exemplo, 123, Centro",
+  streetAddress: "Coronel Luiz Maia, Delfino Magalhães, casa 18",
   addressLocality: "Sua Cidade",
-  addressRegion: "UF",
-  postalCode: "00000-000",
+  addressRegion: "MG",
+  postalCode: "39402824",
   addressCountry: "BR",
 };
 
