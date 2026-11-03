@@ -27,7 +27,7 @@ function toProduct(product: Product): Product {
     price: product.price,
     imageUrl: product.imageUrl,
     available: product.available,
-    orderType: product.orderType,
+    orderTypes: product.orderTypes,
   };
 }
 

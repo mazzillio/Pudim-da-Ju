@@ -13,9 +13,13 @@ export function ProductCard({ product }: { product: Product }) {
       className="group flex gap-4 rounded-2xl border-2 border-border p-3 outline-none transition-[background-color,transform] duration-150 hover:bg-muted focus-visible:bg-muted active:scale-[0.98]"
     >
       <div className="min-w-0 flex-1 py-1.5">
-        <Badge variant={product.orderType === "pronta-entrega" ? "default" : "secondary"} className="mb-1.5">
-          {product.orderType === "pronta-entrega" ? "Pronta entrega" : "Encomenda"}
-        </Badge>
+        <div className="mb-1.5 flex flex-wrap gap-1.5">
+          {product.orderTypes.map((type) => (
+            <Badge key={type} variant={type === "pronta-entrega" ? "default" : "secondary"}>
+              {type === "pronta-entrega" ? "Pronta entrega" : "Encomenda"}
+            </Badge>
+          ))}
+        </div>
         <h2 className="font-heading text-base font-semibold text-foreground">{product.name}</h2>
         <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{product.description}</p>
         <p className="mt-2.5 text-base font-semibold text-foreground">{formatCurrency(product.price)}</p>

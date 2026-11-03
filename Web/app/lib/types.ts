@@ -9,7 +9,8 @@ export interface Product {
   price: number;
   imageUrl: string;
   available: boolean;
-  orderType: OrderType;
+  /** One or both: a product can be in stock and also taken as an order. */
+  orderTypes: OrderType[];
 }
 
 export interface CartItem {

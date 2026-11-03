@@ -18,7 +18,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
         <OrderTypeTabs active={activeType} />
         <div key={activeType ?? "todos"} className="grid grid-cols-1 gap-x-6 gap-y-6 px-3 py-6 sm:grid-cols-2">
           {products
-            .filter((product) => !activeType || product.orderType === activeType)
+            .filter((product) => !activeType || product.orderTypes.includes(activeType))
             .map((product, index) => (
               <div
                 key={product.id}
