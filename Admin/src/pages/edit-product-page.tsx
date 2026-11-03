@@ -5,10 +5,10 @@ import { BackLink } from "@/components/admin/back-link";
 import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { LoadError } from "@/components/admin/load-error";
 import { ProductForm } from "@/components/admin/product-form";
+import { ProductNotFound } from "@/components/admin/product-not-found";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, api, friendlyError } from "@/lib/api";
 import { useTitle } from "@/lib/use-title";
-import { NotFoundPage } from "@/pages/not-found-page";
 
 export function EditProductPage() {
   useTitle("Editar pudim");
@@ -29,7 +29,7 @@ export function EditProductPage() {
   if (query.isError) {
     // 400 = malformed id in the URL; same answer as a missing product.
     if (query.error instanceof ApiError && (query.error.status === 404 || query.error.status === 400)) {
-      return <NotFoundPage />;
+      return <ProductNotFound />;
     }
     return <LoadError message={friendlyError(query.error)} onRetry={() => query.refetch()} />;
   }

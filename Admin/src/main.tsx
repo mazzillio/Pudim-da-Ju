@@ -3,7 +3,7 @@ import "@/index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 
 import { Toaster } from "@/components/ui/sonner";
 import { applyTheme } from "@/config";
@@ -36,8 +36,10 @@ createRoot(root).render(
             <Route index element={<ProductsPage />} />
             <Route path="pudins/novo" element={<NewProductPage />} />
             <Route path="pudins/:id" element={<EditProductPage />} />
-            <Route path="*" element={<NotFoundPage />} />
           </Route>
+          <Route path="/404" element={<NotFoundPage />} />
+          {/* Any unknown path, logged in or not, lands on the 404 page. */}
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

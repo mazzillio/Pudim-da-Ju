@@ -20,6 +20,8 @@ Login com a conta criada pelo `npm run db:seed` da API.
   que salva na hora (o pudim some ou volta para a loja).
 - **Novo / Editar pudim** (`/pudins/novo`, `/pudins/:id`): nome, descrição, preço em reais (aceita
   `45,90`), tipo, disponibilidade e foto. Excluir pede confirmação.
+- **Página não encontrada** (`/404`): qualquer endereço que não existe redireciona para ela, com ou
+  sem login. Um pudim inexistente em `/pudins/:id` mostra "Pudim não encontrado" dentro do painel.
 - **Foto:** por enquanto é um link (`https://...`) com prévia. O upload para o Cloudflare R2 já tem o
   contrato na API (`POST /uploads/product-image`, responde 501 até ser implementado) e o tipo
   `ProductImageUpload` em `src/lib/types.ts`; quando estiver pronto, só
