@@ -36,7 +36,7 @@ Em produção, deixe `CORS_ALLOW_LAN=false` e liste as origens em `CORS_ORIGIN`.
 | ------ | ---------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/auth/login`                | —    | Login com email e senha, retorna `{ token, user }`                                                                   |
 | GET    | `/auth/me`                   | ✅   | Usuário logado                                                                                                       |
-| GET    | `/products`                  | —    | Lista pudins (`?available=true`, `?orderType=encomenda`)                                                             |
+| GET    | `/products`                  | —    | Lista pudins (`?available=true`, `?orderType=encomenda`; produtos com os dois tipos aparecem nos dois filtros)                                                          |
 | GET    | `/products/:id`              | —    | Busca por id                                                                                                         |
 | GET    | `/products/slug/:slug`       | —    | Busca por slug (usado pela loja)                                                                                     |
 | POST   | `/products`                  | ✅   | Cria pudim (slug gerado a partir do nome se omitido)                                                                 |
