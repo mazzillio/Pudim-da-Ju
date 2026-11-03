@@ -29,7 +29,7 @@ if (!root) throw new Error("#root not found");
 createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AdminLayout />}>

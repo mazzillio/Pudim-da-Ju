@@ -4,7 +4,7 @@
  */
 export const config = {
   storeName: "Pudim da Ju",
-  logoUrl: "/pudim-da-ju.svg",
+  logoUrl: `${import.meta.env.BASE_URL}pudim-da-ju.svg`,
   apiUrl: import.meta.env.VITE_API_URL || "http://localhost:3333",
   /** Storefront URL, for the "Ver loja" link. */
   storeUrl: import.meta.env.VITE_STORE_URL || "http://localhost:3000",
