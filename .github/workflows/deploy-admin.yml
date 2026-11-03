@@ -1,0 +1,67 @@
+name: Deploy Admin (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    paths: ["Admin/**", ".github/workflows/deploy-admin.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Admin
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: Admin/package-lock.json
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # "/Pudim-da-Ju" on github.io, "" with a custom domain.
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_STORE_URL: ${{ vars.VITE_STORE_URL }}
+          # Optional; unset variables fall back to the default theme.
+          VITE_THEME_BRAND: ${{ vars.VITE_THEME_BRAND }}
+          VITE_THEME_BRAND_FOREGROUND: ${{ vars.VITE_THEME_BRAND_FOREGROUND }}
+          VITE_THEME_SURFACE: ${{ vars.VITE_THEME_SURFACE }}
+          VITE_THEME_INK: ${{ vars.VITE_THEME_INK }}
+
+      # GitHub Pages has no SPA fallback: serving index.html as the 404 page lets
+      # deep links like /pudins/123 load the app, which then routes on the client.
+      - run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: Admin/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

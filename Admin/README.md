@@ -32,6 +32,11 @@ Login com a conta criada pelo `npm run db:seed` da API.
 - **Sessão:** o JWT da API fica no `localStorage` (`src/lib/session.ts`). Qualquer 401 limpa o token e
   volta para o login com o aviso "Sua sessão expirou". O layout valida o token em `GET /auth/me`.
 
+## Deploy
+
+Publicado no GitHub Pages pelo workflow `.github/workflows/deploy-admin.yml`. O passo a passo
+(variáveis, CORS da API, domínio próprio) está em [`../DEPLOY.md`](../DEPLOY.md).
+
 ## Scripts
 
 | Script | O que faz |
