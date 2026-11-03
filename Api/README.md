@@ -1,0 +1,69 @@
+# Pudim da Ju — API
+
+API do catálogo da loja: CRUD de pudins e login da dona da loja com JWT.
+
+**Stack:** Fastify 5 · Drizzle ORM (Postgres) · Zod · Scalar (docs) · Vitest · Biome
+
+## Rodando localmente
+
+```bash
+cp .env.example .env      # ajuste JWT_SECRET e ADMIN_PASSWORD
+npm install
+npm run db:up             # Postgres via docker-compose
+npm run db:migrate        # cria as tabelas
+npm run db:seed           # cria a conta da dona da loja + pudins de exemplo
+npm run dev               # http://localhost:3333
+```
+
+Documentação interativa (Scalar): **http://localhost:3333/docs**
+
+## Rotas
+
+| Método | Rota                         | Auth | Descrição                                                                                                            |
+| ------ | ---------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/auth/login`                | —    | Login com email e senha, retorna `{ token, user }`                                                                   |
+| GET    | `/auth/me`                   | ✅   | Usuário logado                                                                                                       |
+| GET    | `/products`                  | —    | Lista pudins (`?available=true`, `?orderType=encomenda`)                                                             |
+| GET    | `/products/:id`              | —    | Busca por id                                                                                                         |
+| GET    | `/products/slug/:slug`       | —    | Busca por slug (usado pela loja)                                                                                     |
+| POST   | `/products`                  | ✅   | Cria pudim (slug gerado a partir do nome se omitido)                                                                 |
+| PATCH  | `/products/:id`              | ✅   | Atualiza só os campos enviados                                                                                       |
+| PATCH  | `/products/:id/availability` | ✅   | `{ "available": false }` liga/desliga o pudim                                                                        |
+| DELETE | `/products/:id`              | ✅   | Remove pudim                                                                                                         |
+| POST   | `/uploads/product-image`     | ✅   | **Contrato apenas**: URL assinada para enviar a foto ao Cloudflare R2. Responde `501` até o storage ser implementado |
+
+Rotas com ✅ exigem `Authorization: Bearer <token>`.
+`price` é em reais na API (ex.: `45.9`) e salvo em centavos no banco.
+
+## Arquitetura
+
+Modular: cada módulo tem tabela, schemas (Zod), repositório, service e rotas.
+O `app.ts` recebe os repositórios por injeção, então os testes usam fakes em memória.
+
+```
+src/
+  app.ts                 # monta o Fastify e registra os módulos
+  server.ts              # bootstrap: env, banco, listen
+  config/env.ts          # validação das variáveis de ambiente
+  db/                    # client, schema (drizzle-kit), migrate, seed
+  shared/                # erros, hash de senha (scrypt), plugins (auth, docs, error handler)
+  modules/
+    auth/                # login e /me
+    users/               # tabela e repositório de usuários
+    products/            # CRUD de pudins
+drizzle/                 # migrations SQL geradas
+test/                    # testes Vitest (app.inject + repositórios em memória)
+```
+
+## Scripts
+
+| Script                           | O que faz                                  |
+| -------------------------------- | ------------------------------------------ |
+| `npm run dev`                    | API em modo watch                          |
+| `npm run build` / `npm start`    | Compila para `dist/` e roda                |
+| `npm test`                       | Vitest                                     |
+| `npm run lint` / `lint:fix`      | Biome                                      |
+| `npm run typecheck`              | `tsc --noEmit`                             |
+| `npm run db:generate`            | Gera migration após mudar uma `*.table.ts` |
+| `npm run db:migrate` / `db:seed` | Aplica migrations / popula o banco         |
+| `npm run db:up` / `db:down`      | Sobe / derruba o Postgres                  |
