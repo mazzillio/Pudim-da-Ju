@@ -38,11 +38,21 @@ export const storeConfig: StoreConfig = {
   pickupPaymentMethods: ["Cartão na retirada"],
   deliveryFee: 5.0,
   minOrderItems: 1,
+  orderLeadDays: 1,
 };
 
 /** Human-readable one-line version of storeAddress, for pickup orders. */
 export function formatStoreAddress(): string {
   return `${storeAddress.streetAddress}, ${storeAddress.addressLocality} - ${storeAddress.addressRegion}, CEP ${storeAddress.postalCode}`;
+}
+
+/** "2026-11-15" -> "15/11/2026 (domingo)", read as a local date so the day never shifts. */
+export function formatOrderDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const formatted = date.toLocaleDateString(storeConfig.locale);
+  const weekday = date.toLocaleDateString(storeConfig.locale, { weekday: "long" });
+  return `${formatted} (${weekday})`;
 }
 
 export function formatCurrency(value: number): string {

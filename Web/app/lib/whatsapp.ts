@@ -1,5 +1,5 @@
 import { getCartItemTotalPrice, getCartSubtotal } from "@/app/lib/cart-utils";
-import { formatCurrency, formatStoreAddress, storeConfig } from "@/app/configs/store-config";
+import { formatCurrency, formatOrderDate, formatStoreAddress, storeConfig } from "@/app/configs/store-config";
 import type { CartItem, CustomerInfo } from "@/app/lib/types";
 
 function buildItemLines(item: CartItem): string[] {
@@ -37,6 +37,7 @@ export function buildOrderMessage(items: CartItem[], customer: CustomerInfo): st
   } else if (customer.deliveryMethod === "pickup") {
     sections.push(`Retirar em: ${formatStoreAddress()}`);
   }
+  if (customer.orderDate) sections.push(`*Data da encomenda: ${formatOrderDate(customer.orderDate)}*`);
   sections.push(`Pagamento: ${customer.paymentMethod}`);
   if (customer.notes) sections.push(`Obs: ${customer.notes}`);
 

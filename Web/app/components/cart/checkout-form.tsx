@@ -8,8 +8,8 @@ import { Label } from "@/app/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
 import { Textarea } from "@/app/components/ui/textarea";
 import { useCart } from "@/app/lib/cart-context";
-import { getCartItemCount } from "@/app/lib/cart-utils";
-import { formatStoreAddress, storeConfig } from "@/app/configs/store-config";
+import { getCartItemCount, getMinOrderDate, getOrderDateRequirement } from "@/app/lib/cart-utils";
+import { formatOrderDate, formatStoreAddress, storeConfig } from "@/app/configs/store-config";
 import type { CustomerInfo, DeliveryMethod } from "@/app/lib/types";
 import { buildOrderMessage, buildWhatsappLink } from "@/app/lib/whatsapp";
 
@@ -28,10 +28,13 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("delivery");
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(storeConfig.paymentMethods[0]);
+  const [orderDate, setOrderDate] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const paymentMethods = getPaymentMethods(deliveryMethod);
+  const orderDateRequirement = getOrderDateRequirement(items);
+  const minOrderDate = getMinOrderDate(storeConfig.orderLeadDays);
 
   function handleDeliveryMethodChange(next: DeliveryMethod) {
     setDeliveryMethod(next);
@@ -52,6 +55,7 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
       deliveryMethod,
       address: deliveryMethod === "delivery" ? address : undefined,
       paymentMethod,
+      orderDate: orderDateRequirement !== "none" && orderDate ? orderDate : undefined,
       notes: notes || undefined,
     };
 
@@ -123,6 +127,28 @@ export function CheckoutForm({ onOrderSent }: { onOrderSent: () => void }) {
           <p className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
             {formatStoreAddress()}
           </p>
+        </div>
+      )}
+
+      {orderDateRequirement !== "none" && (
+        <div className="flex flex-col gap-1.5 rounded-lg border border-primary bg-primary/15 p-3">
+          <Label htmlFor="order-date">
+            {orderDateRequirement === "required" ? "Para quando é a encomenda?" : "É encomenda? Para quando?"}
+          </Label>
+          <p id="order-date-hint" className="text-sm text-muted-foreground">
+            {orderDateRequirement === "required"
+              ? `Seu pedido tem itens feitos sob encomenda. Escolha uma data a partir de ${formatOrderDate(minOrderDate)}.`
+              : `Se quiser algum item por encomenda, escolha uma data a partir de ${formatOrderDate(minOrderDate)}. Para pronta entrega, deixe em branco.`}
+          </p>
+          <Input
+            id="order-date"
+            type="date"
+            required={orderDateRequirement === "required"}
+            min={minOrderDate}
+            value={orderDate}
+            onChange={(e) => setOrderDate(e.target.value)}
+            aria-describedby="order-date-hint"
+          />
         </div>
       )}
 

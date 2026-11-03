@@ -29,6 +29,8 @@ export interface CustomerInfo {
   deliveryMethod: DeliveryMethod;
   address?: string;
   paymentMethod: string;
+  /** "YYYY-MM-DD", when the cart has made-to-order items. */
+  orderDate?: string;
   notes?: string;
 }
 
@@ -59,4 +61,6 @@ export interface StoreConfig {
   deliveryFee?: number;
   /** Minimum total item quantity required to place an order. */
   minOrderItems: number;
+  /** How many days ahead a made-to-order ("encomenda") item must be ordered. */
+  orderLeadDays: number;
 }
