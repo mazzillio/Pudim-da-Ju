@@ -73,6 +73,28 @@ A API é um servidor Node (Fastify) que precisa ficar ligado. O GitHub Pages nã
    - `https://SUA-API/health` → `{"status":"ok"}`
    - `https://SUA-API/docs` → documentação da API
 
+### Alternativa: API na Vercel
+
+A Vercel detecta o Fastify sozinha e roda a API como função serverless.
+
+| Campo | Valor |
+|---|---|
+| Root Directory | `Api` |
+| Framework Preset | Fastify (detectado automaticamente) |
+| Build Command | `npm run build && npm run db:migrate` |
+| Install Command | padrão, ou `npm ci --include=dev` |
+
+As variáveis de ambiente são as mesmas da tabela acima, exceto `NODE_VERSION`. Na Vercel a versão
+do Node fica em **Settings → General → Node.js Version**: escolha 24.x.
+
+- **Entrada:** a Vercel roda o `Api/index.ts`, que só carrega o `src/server.ts`. Sem ele, ela
+  escolheria o `src/app.ts`, que não conecta no banco nem sobe o servidor.
+- **TypeScript:** a Vercel recompila o código com um `tsconfig` temporário que estende o nosso. Por
+  isso o `typeRoots` está explícito no `Api/tsconfig.json`. Sem ele, o deploy falha com
+  `Cannot find type definition file for 'node'`.
+- **Cold start:** a primeira requisição depois de um tempo parado é mais lenta, porque abre a
+  conexão com o Neon.
+
 > **Plano gratuito do Render:** o serviço "dorme" depois de ~15 min sem uso e a primeira requisição
 > leva ~1 min. O painel mostra "Não foi possível falar com o servidor" nesse meio-tempo. Basta tentar
 > de novo.
