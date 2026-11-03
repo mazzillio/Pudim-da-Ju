@@ -1,4 +1,4 @@
-import { and, asc, eq, type SQL } from "drizzle-orm";
+import { and, arrayContains, asc, eq, type SQL } from "drizzle-orm";
 
 import type { Database } from "../../db/client.js";
 import { type OrderType, type ProductRow, products } from "./products.table.js";
@@ -12,7 +12,7 @@ export interface ProductFilters {
 
 export type CreateProductData = Pick<
   Product,
-  "slug" | "name" | "description" | "priceCents" | "imageUrl" | "available" | "orderType"
+  "slug" | "name" | "description" | "priceCents" | "imageUrl" | "available" | "orderTypes"
 >;
 
 export type UpdateProductData = Partial<CreateProductData>;
@@ -32,7 +32,7 @@ export class DrizzleProductsRepository implements ProductsRepository {
   async list(filters: ProductFilters) {
     const conditions: SQL[] = [];
     if (filters.available !== undefined) conditions.push(eq(products.available, filters.available));
-    if (filters.orderType) conditions.push(eq(products.orderType, filters.orderType));
+    if (filters.orderType) conditions.push(arrayContains(products.orderTypes, [filters.orderType]));
 
     return (
       this.db

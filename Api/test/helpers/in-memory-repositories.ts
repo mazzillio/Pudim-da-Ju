@@ -38,7 +38,7 @@ export class InMemoryProductsRepository implements ProductsRepository {
     return this.items.filter(
       (product) =>
         (filters.available === undefined || product.available === filters.available) &&
-        (!filters.orderType || product.orderType === filters.orderType),
+        (!filters.orderType || product.orderTypes.includes(filters.orderType)),
     );
   }
 

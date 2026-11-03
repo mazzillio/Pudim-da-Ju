@@ -2,6 +2,12 @@ import { z } from "zod";
 
 export const orderTypeSchema = z.enum(["pronta-entrega", "encomenda"]);
 
+/** At least one type; "both" is just the two of them. Duplicates are dropped. */
+const orderTypesSchema = z
+  .array(orderTypeSchema)
+  .min(1)
+  .transform((types) => orderTypeSchema.options.filter((type) => types.includes(type)));
+
 const slugSchema = z
   .string()
   .min(1)
@@ -17,14 +23,14 @@ const productFieldsSchema = z.object({
   price: z.number().positive().max(100_000),
   imageUrl: z.url(),
   available: z.boolean(),
-  orderType: orderTypeSchema,
+  orderTypes: orderTypesSchema,
 });
 
 export const createProductBodySchema = productFieldsSchema.extend({
   slug: slugSchema.optional(),
   description: productFieldsSchema.shape.description.default(""),
   available: z.boolean().default(true),
-  orderType: orderTypeSchema.default("pronta-entrega"),
+  orderTypes: orderTypesSchema.default(["pronta-entrega"]),
 });
 
 export const updateProductBodySchema = productFieldsSchema
@@ -55,7 +61,7 @@ export const productResponseSchema = z.object({
   price: z.number(),
   imageUrl: z.string(),
   available: z.boolean(),
-  orderType: orderTypeSchema,
+  orderTypes: z.array(orderTypeSchema),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 });

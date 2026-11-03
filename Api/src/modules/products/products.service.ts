@@ -29,7 +29,7 @@ export function toProductResponse(product: Product): ProductResponse {
     price: product.priceCents / 100,
     imageUrl: product.imageUrl,
     available: product.available,
-    orderType: product.orderType,
+    orderTypes: product.orderTypes,
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
   };

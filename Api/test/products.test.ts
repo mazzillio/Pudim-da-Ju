@@ -36,17 +36,43 @@ describe("slugify", () => {
 describe("public catalog", () => {
   it("lists products without a token and filters by availability and order type", async () => {
     await createProduct();
-    await createProduct({ ...newPudim, name: "Babydim", orderType: "encomenda", available: false });
+    await createProduct({
+      ...newPudim,
+      name: "Babydim",
+      orderTypes: ["encomenda"],
+      available: false,
+    });
+    await createProduct({
+      ...newPudim,
+      name: "Pudim de Coco",
+      orderTypes: ["pronta-entrega", "encomenda"],
+    });
 
     const all = await ctx.app.inject({ method: "GET", url: "/products" });
     expect(all.statusCode).toBe(200);
-    expect(all.json()).toHaveLength(2);
+    expect(all.json()).toHaveLength(3);
 
     const available = await ctx.app.inject({ method: "GET", url: "/products?available=true" });
-    expect(available.json().map((p: { name: string }) => p.name)).toEqual([newPudim.name]);
+    expect(available.json().map((p: { name: string }) => p.name)).toEqual([
+      newPudim.name,
+      "Pudim de Coco",
+    ]);
 
+    // A product offered both ways shows up under either filter.
     const encomenda = await ctx.app.inject({ method: "GET", url: "/products?orderType=encomenda" });
-    expect(encomenda.json().map((p: { name: string }) => p.name)).toEqual(["Babydim"]);
+    expect(encomenda.json().map((p: { name: string }) => p.name)).toEqual([
+      "Babydim",
+      "Pudim de Coco",
+    ]);
+
+    const pronta = await ctx.app.inject({
+      method: "GET",
+      url: "/products?orderType=pronta-entrega",
+    });
+    expect(pronta.json().map((p: { name: string }) => p.name)).toEqual([
+      newPudim.name,
+      "Pudim de Coco",
+    ]);
   });
 
   it("gets a product by id and by slug", async () => {
@@ -86,9 +112,19 @@ describe("POST /products", () => {
       slug: "pudim-de-doce-de-leite",
       price: 55.9,
       available: true,
-      orderType: "pronta-entrega",
+      orderTypes: ["pronta-entrega"],
     });
     expect(ctx.productsRepository.items[0]?.priceCents).toBe(5590);
+  });
+
+  it("accepts both order types, dropping duplicates and keeping a stable order", async () => {
+    const response = await createProduct({
+      ...newPudim,
+      orderTypes: ["encomenda", "pronta-entrega", "encomenda"],
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json().orderTypes).toEqual(["pronta-entrega", "encomenda"]);
   });
 
   it("returns 409 for a duplicated slug", async () => {
@@ -100,7 +136,8 @@ describe("POST /products", () => {
   it.each([
     ["negative price", { ...newPudim, price: -1 }],
     ["invalid image url", { ...newPudim, imageUrl: "foto.jpg" }],
-    ["unknown order type", { ...newPudim, orderType: "delivery" }],
+    ["unknown order type", { ...newPudim, orderTypes: ["delivery"] }],
+    ["no order type", { ...newPudim, orderTypes: [] }],
     ["missing name", { ...newPudim, name: "" }],
   ])("returns 400 for %s", async (_, payload) => {
     const response = await createProduct(payload);
@@ -116,14 +153,14 @@ describe("PATCH /products/:id", () => {
       method: "PATCH",
       url: `/products/${created.id}`,
       headers: auth,
-      payload: { price: 60, orderType: "encomenda" },
+      payload: { price: 60, orderTypes: ["encomenda"] },
     });
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toMatchObject({
       name: newPudim.name,
       price: 60,
-      orderType: "encomenda",
+      orderTypes: ["encomenda"],
     });
   });
 

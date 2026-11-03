@@ -9,7 +9,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-/** Mirrors the storefront's OrderType: in stock ("pronta-entrega") or made to order ("encomenda"). */
+/** Mirrors the storefront's OrderType: in stock ("pronta-entrega") or made to order ("encomenda").
+ * A product can be offered both ways, so it stores a list of types. */
 export const orderTypeEnum = pgEnum("order_type", ["pronta-entrega", "encomenda"]);
 
 export const products = pgTable("products", {
@@ -21,7 +22,7 @@ export const products = pgTable("products", {
   priceCents: integer().notNull(),
   imageUrl: text().notNull(),
   available: boolean().notNull().default(true),
-  orderType: orderTypeEnum().notNull().default("pronta-entrega"),
+  orderTypes: orderTypeEnum().array().notNull().default(["pronta-entrega"]),
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp({ withTimezone: true })
     .notNull()
