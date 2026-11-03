@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: pudim-da-ju-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pudim
+      POSTGRES_PASSWORD: pudim
+      POSTGRES_DB: pudim_da_ju
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pudim -d pudim_da_ju"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
