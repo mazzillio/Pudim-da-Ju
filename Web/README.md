@@ -12,6 +12,9 @@ npm install
 npm run dev
 ```
 
+Na rede local, abra `http://<ip-da-máquina>:3000` em outro aparelho. O catálogo é buscado pelo
+servidor do Next, então `API_URL` pode continuar `localhost` enquanto a API rodar na mesma máquina.
+
 ## Personalização
 
 - Nome, endereço, WhatsApp, pagamento e taxa de entrega: `app/configs/store-config.ts`
