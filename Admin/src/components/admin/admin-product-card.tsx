@@ -24,11 +24,13 @@ export function AdminProductCard({ product }: { product: Product }) {
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="truncate font-heading text-base font-semibold text-foreground">{product.name}</h2>
-          <div className="mt-1 flex items-center gap-2">
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="text-sm font-semibold text-foreground">{formatCurrency(product.price)}</span>
-            <Badge variant={product.orderType === "pronta-entrega" ? "default" : "secondary"}>
-              {product.orderType === "pronta-entrega" ? "Pronta entrega" : "Encomenda"}
-            </Badge>
+            {product.orderTypes.map((type) => (
+              <Badge key={type} variant={type === "pronta-entrega" ? "default" : "secondary"}>
+                {type === "pronta-entrega" ? "Pronta entrega" : "Encomenda"}
+              </Badge>
+            ))}
           </div>
         </div>
         <span className="flex shrink-0 items-center gap-0.5 text-sm text-muted-foreground group-hover:text-foreground">
