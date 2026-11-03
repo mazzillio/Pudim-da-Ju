@@ -11,8 +11,10 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "types": ["node"],
+    // Explicit so configs that extend this one from elsewhere (Vercel writes one in /tmp) still find @types/node.
+    "typeRoots": ["./node_modules/@types"],
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["src", "test", "drizzle.config.ts", "vitest.config.ts"]
+  "include": ["index.ts", "src", "test", "drizzle.config.ts", "vitest.config.ts"]
 }
