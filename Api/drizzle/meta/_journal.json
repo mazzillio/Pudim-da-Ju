@@ -15,6 +15,13 @@
       "when": 1793734189303,
       "tag": "0001_order_types",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794059551661,
+      "tag": "0002_feature_flags",
+      "breakpoints": true
     }
   ]
 }

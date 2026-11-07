@@ -1,6 +1,10 @@
 import { type AppDependencies, type AppOptions, buildApp } from "../../src/app.js";
 import { hashPassword } from "../../src/shared/password.js";
-import { InMemoryProductsRepository, InMemoryUsersRepository } from "./in-memory-repositories.js";
+import {
+  InMemoryFeatureFlagsRepository,
+  InMemoryProductsRepository,
+  InMemoryUsersRepository,
+} from "./in-memory-repositories.js";
 
 export const OWNER = { name: "Ju", email: "ju@pudimdaju.com.br", password: "senha-super-secreta" };
 
@@ -10,6 +14,7 @@ export async function buildTestApp(
 ) {
   const usersRepository = new InMemoryUsersRepository();
   const productsRepository = new InMemoryProductsRepository();
+  const featureFlagsRepository = new InMemoryFeatureFlagsRepository();
 
   await usersRepository.create({
     name: OWNER.name,
@@ -24,7 +29,7 @@ export async function buildTestApp(
       corsOrigin: ["http://localhost:3000"],
       ...appOptions,
     },
-    { usersRepository, productsRepository, ...overrides },
+    { usersRepository, productsRepository, featureFlagsRepository, ...overrides },
   );
 
   async function login() {
@@ -36,5 +41,5 @@ export async function buildTestApp(
     return { authorization: `Bearer ${response.json().token}` };
   }
 
-  return { app, usersRepository, productsRepository, login };
+  return { app, usersRepository, productsRepository, featureFlagsRepository, login };
 }

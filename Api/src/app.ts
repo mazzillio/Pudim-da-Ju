@@ -7,6 +7,8 @@ import {
 } from "fastify-type-provider-zod";
 
 import { authModule } from "./modules/auth/auth.module.js";
+import { featureFlagsModule } from "./modules/feature-flags/feature-flags.module.js";
+import type { FeatureFlagsRepository } from "./modules/feature-flags/feature-flags.repository.js";
 import { productsModule } from "./modules/products/products.module.js";
 import type { ProductsRepository } from "./modules/products/products.repository.js";
 import type { ProductImageStorage } from "./modules/uploads/product-image-storage.js";
@@ -29,6 +31,7 @@ export interface AppOptions {
 export interface AppDependencies {
   usersRepository: UsersRepository;
   productsRepository: ProductsRepository;
+  featureFlagsRepository: FeatureFlagsRepository;
   /** Optional until the Cloudflare R2 storage is implemented; without it, uploads answer 501. */
   productImageStorage?: ProductImageStorage;
 }
@@ -56,6 +59,7 @@ export async function buildApp(options: AppOptions, deps: AppDependencies) {
   await authModule(app, deps);
   await productsModule(app, deps);
   await uploadsModule(app, deps);
+  await featureFlagsModule(app, deps);
 
   return app;
 }

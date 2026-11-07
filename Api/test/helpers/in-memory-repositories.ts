@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 
+import type { FeatureFlagsRepository } from "../../src/modules/feature-flags/feature-flags.repository.js";
 import type {
   CreateProductData,
   Product,
@@ -68,5 +69,17 @@ export class InMemoryProductsRepository implements ProductsRepository {
     const before = this.items.length;
     this.items = this.items.filter((product) => product.id !== id);
     return this.items.length < before;
+  }
+}
+
+export class InMemoryFeatureFlagsRepository implements FeatureFlagsRepository {
+  items: Record<string, boolean> = {};
+
+  async list() {
+    return { ...this.items };
+  }
+
+  async set(key: string, enabled: boolean) {
+    this.items[key] = enabled;
   }
 }

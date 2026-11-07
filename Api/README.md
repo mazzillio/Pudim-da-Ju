@@ -36,7 +36,7 @@ Em produção, deixe `CORS_ALLOW_LAN=false` e liste as origens em `CORS_ORIGIN`.
 | ------ | ---------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/auth/login`                | —    | Login com email e senha, retorna `{ token, user }`                                                                   |
 | GET    | `/auth/me`                   | ✅   | Usuário logado                                                                                                       |
-| GET    | `/products`                  | —    | Lista pudins (`?available=true`, `?orderType=encomenda`; produtos com os dois tipos aparecem nos dois filtros)                                                          |
+| GET    | `/products`                  | —    | Lista pudins (`?available=true`, `?orderType=encomenda`; produtos com os dois tipos aparecem nos dois filtros)       |
 | GET    | `/products/:id`              | —    | Busca por id                                                                                                         |
 | GET    | `/products/slug/:slug`       | —    | Busca por slug (usado pela loja)                                                                                     |
 | POST   | `/products`                  | ✅   | Cria pudim (slug gerado a partir do nome se omitido)                                                                 |
@@ -44,6 +44,8 @@ Em produção, deixe `CORS_ALLOW_LAN=false` e liste as origens em `CORS_ORIGIN`.
 | PATCH  | `/products/:id/availability` | ✅   | `{ "available": false }` liga/desliga o pudim                                                                        |
 | DELETE | `/products/:id`              | ✅   | Remove pudim                                                                                                         |
 | POST   | `/uploads/product-image`     | ✅   | **Contrato apenas**: URL assinada para enviar a foto ao Cloudflare R2. Responde `501` até o storage ser implementado |
+| GET    | `/feature-flags`             | —    | Feature flags da loja (`{ freeShipping }`); flag nunca gravada vem `false`                                           |
+| PATCH  | `/feature-flags`             | ✅   | Liga/desliga flags, ex. `{ "freeShipping": true }`                                                                   |
 
 Rotas com ✅ exigem `Authorization: Bearer <token>`.
 `price` é em reais na API (ex.: `45.9`) e salvo em centavos no banco.

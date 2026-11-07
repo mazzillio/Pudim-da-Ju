@@ -1,6 +1,7 @@
 import { buildApp } from "./app.js";
 import type { Env } from "./config/env.js";
 import { createDatabase } from "./db/client.js";
+import { DrizzleFeatureFlagsRepository } from "./modules/feature-flags/feature-flags.repository.js";
 import { DrizzleProductsRepository } from "./modules/products/products.repository.js";
 import { DrizzleUsersRepository } from "./modules/users/users.repository.js";
 
@@ -19,6 +20,7 @@ export async function createApp(env: Env) {
     {
       usersRepository: new DrizzleUsersRepository(database.db),
       productsRepository: new DrizzleProductsRepository(database.db),
+      featureFlagsRepository: new DrizzleFeatureFlagsRepository(database.db),
     },
   );
   app.addHook("onClose", () => database.close());
