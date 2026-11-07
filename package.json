@@ -1,0 +1,8 @@
+{
+  "name": "pudim-da-ju",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:network": "node scripts/dev-network.mjs"
+  }
+}
