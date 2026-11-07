@@ -1,6 +1,8 @@
 import { OrderTypeTabs } from "@/app/components/catalog/order-type-tabs";
 import { ProductCard } from "@/app/components/catalog/product-card";
+import { FreeShippingBanner } from "@/app/components/layout/free-shipping-banner";
 import { SiteHeader } from "@/app/components/layout/site-header";
+import { getFeatureFlags } from "@/app/lib/feature-flags-api";
 import { getAvailableProducts } from "@/app/lib/products-api";
 import type { OrderType } from "@/app/lib/types";
 
@@ -9,11 +11,12 @@ const orderTypes: OrderType[] = ["pronta-entrega", "encomenda"];
 export default async function Home({ searchParams }: { searchParams: Promise<{ tipo?: string }> }) {
   const { tipo } = await searchParams;
   const activeType = orderTypes.find((type) => type === tipo);
-  const products = await getAvailableProducts();
+  const [products, flags] = await Promise.all([getAvailableProducts(), getFeatureFlags()]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-background">
       <SiteHeader />
+      {flags.freeShipping && <FreeShippingBanner />}
       <main className="mx-auto w-full max-w-5xl flex-1 pb-10 lg:px-6">
         <OrderTypeTabs active={activeType} />
         <div key={activeType ?? "todos"} className="grid grid-cols-1 gap-x-6 gap-y-6 px-3 py-6 sm:grid-cols-2">
