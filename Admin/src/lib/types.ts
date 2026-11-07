@@ -43,3 +43,9 @@ export interface ProductImageUpload {
   key: string;
   expiresAt: string;
 }
+
+/** Mirrors `GET /feature-flags` (Api/src/modules/feature-flags). */
+export interface FeatureFlags {
+  /** Shows the "frete grátis hoje" banner on the storefront. */
+  freeShipping: boolean;
+}

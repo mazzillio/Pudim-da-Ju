@@ -1,6 +1,6 @@
 import { config } from "@/config";
 import { session } from "@/lib/session";
-import type { Product, ProductImageUpload, ProductInput, User } from "@/lib/types";
+import type { FeatureFlags, Product, ProductImageUpload, ProductInput, User } from "@/lib/types";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -54,6 +54,9 @@ export const api = {
   setAvailability: (id: string, available: boolean) =>
     request<Product>(`/products/${id}/availability`, { method: "PATCH", body: { available } }),
   deleteProduct: (id: string) => request<void>(`/products/${id}`, { method: "DELETE" }),
+  getFeatureFlags: () => request<FeatureFlags>("/feature-flags"),
+  updateFeatureFlags: (flags: Partial<FeatureFlags>) =>
+    request<FeatureFlags>("/feature-flags", { method: "PATCH", body: flags }),
   /** Contract only for now: the API answers 501 until Cloudflare R2 is wired in. */
   requestProductImageUpload: (input: { contentType: ProductImageUpload["headers"]["Content-Type"]; size: number }) =>
     request<ProductImageUpload>("/uploads/product-image", { method: "POST", body: input }),

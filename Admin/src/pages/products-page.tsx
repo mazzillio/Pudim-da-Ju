@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 
 import { AdminProductCard } from "@/components/admin/admin-product-card";
+import { FreeShippingSwitch } from "@/components/admin/free-shipping-switch";
 import { LoadError } from "@/components/admin/load-error";
 import { type StatusFilter, StatusTabs } from "@/components/admin/status-tabs";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,8 @@ export function ProductsPage() {
           Novo pudim
         </Button>
       </div>
+
+      <FreeShippingSwitch />
 
       <StatusTabs
         active={active}
